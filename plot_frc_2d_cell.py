@@ -10,11 +10,11 @@ import numpy as np
 
 
 params_2d_cell = {'grid_delta': np.load('cell/phantom/grid_delta.npy'),
-                  'compression_mode': 1,
+                  'compression_mode': 2,
                   'obj':[],
                   'ref':[],
                   'nei':'500',
-                  'save_path': 'cell/PCA_ptycho_recon/comparison',
+                  'save_path': 'cell/ptychography/comparison',
                   'fig_ax':[],
                   'radius_ls':[],
                   'nei_intersection_ls':[],
@@ -33,6 +33,7 @@ print('finite support area ratio in sample = %.3f' %(n_sample_pixel/(params['gri
 
 if params['compression_mode'] == 0: compression_mode = 'normal'
 if params['compression_mode'] == 1: compression_mode = 'PCA_compressed'
+if params['compression_mode'] == 2: compression_mode = 'AE_compressed'
 
 
 matplotlib.rcParams['pdf.fonttype'] = 'truetype'
@@ -49,8 +50,11 @@ path = os.path.dirname(params['save_path'])
 
 if compression_mode == 'normal':
    nei_ls = ['']
-else:
-    nei_ls = [1, 10,  30 , 50, 100, 300, 1000, 1500, 2000, 2500, 3000, 3500]
+elif compression_mode == 'PCA_compressed':
+   nei_ls = [1, 10,  30 , 50, 100, 300, 1000, 1500, 2000, 2500, 3000, 3500]
+elif compression_mode == 'AE_compressed':
+   nei_ls = ['n2e7','AE_72x72','AE_72x72_ZS','AE_rWeightLoss_72x72','AE_rWeightLoss_72x72_ZS']
+
 nei_intersection_ls = []
 radius_intersection_ls = []
 
@@ -59,16 +63,24 @@ for nei in nei_ls:
     if compression_mode == 'normal' :
         obj_dir = os.path.join(path, 'n2e7')
         ref_dir = os.path.join(path, 'n2e7_ref')
-    else:
+    elif compression_mode == 'PCA_compressed' :
         obj_dir = os.path.join(path, 'n2e7_nei' + str(nei))
         ref_dir = os.path.join(path, 'n2e7_nei' + str(nei) + '_ref')
+    elif compression_mode == 'AE_compressed' : 
+        obj_dir = os.path.join(path, nei)
+        ref_dir = os.path.join(path, '../phantom/')      
+    if compression_mode=='AE_compressed':
+        params['obj'] = dxchange.read_tiff(os.path.join(obj_dir, 'delta_ds_1.tiff'))
+        params['obj'] = params['obj'][:, :, 0]
 
-    params['obj'] = dxchange.read_tiff(os.path.join(obj_dir, 'delta_ds_1.tiff'))
-    params['obj'] = params['obj'][:, :, 0]
-    params['ref'] = dxchange.read_tiff(os.path.join(ref_dir, 'delta_ds_1.tiff'))
-    params['ref'] = params['ref'][:, :, 0]   
-    # params['ref'] = dxchange.read_tiff("cell/ptychography/phantom/delta.tiff")
-    
+        params['ref'] = dxchange.read_tiff(os.path.join(ref_dir, 'delta.tiff'))
+    else:
+        params['obj'] = dxchange.read_tiff(os.path.join(obj_dir, 'delta_ds_1.tiff'))
+        params['obj'] = params['obj'][:, :, 0]
+
+        params['ref'] = dxchange.read_tiff(os.path.join(ref_dir, 'delta_ds_1.tiff'))
+        params['ref'] = params['ref'][:, :, 0]   
+
     if params['show_plot_title']: Plot_title = compression_mode
     else: Plot_title = None
 
