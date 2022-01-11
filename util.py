@@ -62,16 +62,16 @@ def initialize_object(this_obj_size, dset=None, ds_level=1, object_type='normal'
             obj_beta[...] = 0
         elif object_type == 'absorption_only':
             obj_delta[...] = 0
-        np.save('init_delta_temp.npy', obj_delta)
-        np.save('init_beta_temp.npy', obj_beta)
-        obj_delta = np.zeros(this_obj_size)
-        obj_beta = np.zeros(this_obj_size)
-        obj_delta[:, :, :] = np.load('init_delta_temp.npy', allow_pickle=True)
-        obj_beta[:, :, :] = np.load('init_beta_temp.npy', allow_pickle=True)
-        comm.Barrier()
-        if rank == 0:
-            os.remove('init_delta_temp.npy')
-            os.remove('init_beta_temp.npy')
+        # np.save('init_delta_temp.npy', obj_delta)
+        # np.save('init_beta_temp.npy', obj_beta)
+        # obj_delta = np.zeros(this_obj_size)
+        # obj_beta = np.zeros(this_obj_size)
+        # obj_delta[:, :, :] = np.load('init_delta_temp.npy', allow_pickle=True)
+        # obj_beta[:, :, :] = np.load('init_beta_temp.npy', allow_pickle=True)
+        # comm.Barrier()
+        # if rank == 0:
+        #     os.remove('init_delta_temp.npy')
+        #     os.remove('init_beta_temp.npy')
         return obj_delta, obj_beta
     else:
         if initial_guess is None:

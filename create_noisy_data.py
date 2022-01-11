@@ -9,7 +9,7 @@ import time
 np.random.seed(int(time.time()))
 
 # src_fname = 'cone_256_foam_ptycho/data_cone_256_foam_1nm.h5'
-src_fname = 'cell/ptychography/data_recon_in_the_paper/data_cell_phase.h5'
+src_fname = 'cell/ptychography/phantom_data/data_cell_phase_32x32.h5'
 src_folder = 'cell/ptychography'
 # src_fname = 'cone_256_filled_ptycho/data_cone_256_1nm_marc.h5'
 # dest_fname = 'cone_256_filled_ptycho/data_cone_256_1nm_marc_n2e3_2.h5'
@@ -26,7 +26,7 @@ n_sample_pixel = np.count_nonzero(grid_delta > 1e-10)
 
 # for n_ph_tx in ['1e4', '4e4', '1e5', '4e5', '1e6', '1.75e6', '4e6', '1e7', '1.75e7', '4e7', '1e8', '1.75e8', '4e8', '1e9']:
 # for n_ph_tx in ['1e4', '4e4', '1e5', '4e5', '1e6', '1.5e6', '2e6', '4e6', '1e7', '1.5e7', '2e7', '4e7', '1e8']:
-for n_ph_tx in ['2e7']:
+for n_ph_tx in ['1e8']:
     for postfix in ['', '_ref']:
 
         n_ph = float(n_ph_tx) / n_sample_pixel
@@ -73,7 +73,7 @@ for n_ph_tx in ['2e7']:
                     pro_o_inten_scaled = prj_o_inten * multiplier
                     # dc_intensity = prj_o_inten[int(o.shape[-2] / 2), int(o.shape[-1] / 2)]
                     # prj_o_inten_norm = prj_o_inten / dc_intensity
-                    print(n_ph)
+#                    print(n_ph)
                     prj_o_inten_noisy = np.random.poisson(pro_o_inten_scaled)
 #                    prj_o_inten_noisy = prj_o_inten_noisy / multiplier
                     noise = prj_o_inten_noisy - prj_o_inten

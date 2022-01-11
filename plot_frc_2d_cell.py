@@ -14,7 +14,8 @@ params_2d_cell = {'grid_delta': np.load('cell/phantom/grid_delta.npy'),
                   'obj':[],
                   'ref':[],
                   'nei':'500',
-                  'save_path': 'cell/ptychography/comparison',
+                  'save_path': '../../InPixelAI/outputs_PhoCount2/comparison',
+#                  'save_path': 'cell/ptychography/comparison',
                   'fig_ax':[],
                   'radius_ls':[],
                   'nei_intersection_ls':[],
@@ -53,12 +54,37 @@ if compression_mode == 'normal':
 elif compression_mode == 'PCA_compressed':
    nei_ls = [1, 10,  30 , 50, 100, 300, 1000, 1500, 2000, 2500, 3000, 3500]
 elif compression_mode == 'AE_compressed':
-   nei_ls = ['n2e7','AE_72x72','AE_72x72_ZS','AE_rWeightLoss_72x72','AE_rWeightLoss_72x72_ZS']
+   # x = [1,2,5,10,25,50,75,100]
+   # nei_ls = [f"AE_72x72_Dense_512_linear_mse_{i}" for i in x]
+   x = [4,5,8,10,16,20,32,40,50,60,64,100,128,256,512]
+   nei_ls = [f"AE_72x72_Dense_{i}_linear_mse" for i in x]
+#    nei_ls = [
+# #      "AE_72x72_Dense_10_linear_mse",
+# #      "AE_72x72_Dense_16_linear_mse",
+# #      "AE_72x72_Dense_20_linear_mse",
+#       "AE_72x72_Dense_32_linear_mse",
+#       "AE_72x72_Dense_40_linear_mse",
+#       "AE_72x72_Dense_50_linear_mse",
+#       "AE_72x72_Dense_60_linear_mse",
+#       "AE_72x72_Dense_64_linear_mse",
+#       "AE_72x72_Dense_100_linear_mse",
+#       "AE_72x72_Dense_128_linear_mse",
+#       "AE_72x72_Dense_256_linear_mse",
+#       "AE_72x72_Dense_512_linear_mse",]
+# # AE_72x72_Dense_BatchNorm_512_linear_mse
+# # AE_72x72_Dense_BatchNorm_512_relu_mse
+# # AE_72x72_Dense_1024_128_linear_mse
+# # AE_72x72_Dense_512_relu_mse
+# # AE_72x72_Dense_512_relu_r_weighted
+# # AE_72x72_Dense_512_relu_telescope
+# # AE_72x72_Dense_512_linear_r_weighted
+# # AE_72x72_Dense_512_linear_telescope
 
 nei_intersection_ls = []
 radius_intersection_ls = []
 
 for nei in nei_ls:
+    print(nei)
     params['nei'] = nei
     if compression_mode == 'normal' :
         obj_dir = os.path.join(path, 'n2e7')
@@ -68,8 +94,10 @@ for nei in nei_ls:
         ref_dir = os.path.join(path, 'n2e7_nei' + str(nei) + '_ref')
     elif compression_mode == 'AE_compressed' : 
         obj_dir = os.path.join(path, nei)
+        obj_dir = os.path.join(obj_dir,nei)
         ref_dir = os.path.join(path, '../phantom/')      
     if compression_mode=='AE_compressed':
+        print(obj_dir)
         params['obj'] = dxchange.read_tiff(os.path.join(obj_dir, 'delta_ds_1.tiff'))
         params['obj'] = params['obj'][:, :, 0]
 
@@ -83,7 +111,7 @@ for nei in nei_ls:
 
     if params['show_plot_title']: Plot_title = compression_mode
     else: Plot_title = None
-
+    params['label'] = nei.split('_')[-3]
     nei_intersection, radius_intersection, params['radius_ls'], params['T_half_bit_ls'] = fourier_ring_correlation_PCA(**params)
 
     if nei_intersection != None:

@@ -123,6 +123,30 @@ params_2d_cell = {'fname': 'phantom_data/data_cell_phase.h5',
                     'free_prop_cm': 'inf'
                     }
 
-params = params_2d_cell
+params_2d_cell_32pixel = {'fname': 'phantom_data/data_cell_phase_32x32.h5',
+                          'theta_st': 0,
+                          'theta_end': 0,
+                          'n_theta': 1,
+                          'theta_downsample': 1,
+                          'obj_size': (325, 325, 1),
+                          'probe_size': (32, 32),
+                          'energy_ev': 5000,
+                          'psize_cm': 1.e-7,
+                          'phantom_path': 'cell/ptychography/phantom',
+                          'minibatch_size': 66,
+                          'n_batch_per_update': 1,
+                          'cpu_only': True,
+                          'save_path': 'cell/ptychography',
+                          'probe_type': 'gaussian',
+                          'probe_mag_sigma': 6,
+                          'probe_phase_sigma': 6,
+                          'probe_phase_max': 0.5,
+                          'forward_algorithm': 'fresnel',
+                          'object_type': 'phase_only',
+                          'probe_pos': [(y, x) for y in (np.arange(66) * 5) - 16 for x in (np.arange(68) * 5) - 16],
+                          'free_prop_cm': 'inf'
+                      }
+
+params = params_2d_cell_32pixel
 
 create_ptychography_data_batch_numpy(**params)
